@@ -1,24 +1,30 @@
 package main
 
 import (
-	"auth_server/config"
-	"auth_server/controllers"
-
-	"github.com/gofiber/fiber"
+	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v3/middleware/logger"
+	"github.com/gofiber/fiber/v3/middleware/recover"
 )
 
 func main() {
 	app := fiber.New()
 
-	config.GoogleConfig()
+	app.Use(logger.New())
+	app.Use(recover.New())
 
-	app.Get("/google_login", func(c *fiber.Ctx) {
-		controllers.GoogleLogin(c)
+	// config.GoogleConfig()
+
+	app.Get("/", func(c fiber.Ctx) error {
+		return c.SendString("Hello, World 👋!")
 	})
 
-	app.Get("/google_callback", func(c *fiber.Ctx) {
-		controllers.GoogleCallback(c)
-	})
+	// app.Get("/google_login", func(c *fiber.Ctx) {
+	// 	controllers.GoogleLogin(c)go
+	// })
+
+	// app.Get("/google_callback", func(c *fiber.Ctx) {
+	// 	controllers.GoogleCallback(c)
+	// })
 
 	app.Listen(":8080")
 }

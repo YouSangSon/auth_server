@@ -1,35 +1,43 @@
 package config
 
-import (
-	"log"
-	"os"
+// type Config struct {
+// 	GoogleLoginConfig oauth2.Config
+// 	NaverLoginConfig  oauth2.Config
+// 	KaKaoLoginConfig  oauth2.Config
+// 	GithubLoginConfig oauth2.Config
+// }
 
-	"github.com/joho/godotenv"
-	"golang.org/x/oauth2"
-	"golang.org/x/oauth2/google"
-)
+// var AppConfig Config
 
-type Config struct {
-	GoogleLoginConfig oauth2.Config
-}
+// func ConfigLoad() {
+// 	err := godotenv.Load("auth_server.env")
+// 	if err != nil {
+// 		log.Fatalf("Some error occurred. Err: %s", err)
+// 	}
 
-var AppConfig Config
+// 	AppConfig.GoogleLoginConfig = GoogleConfig()
+// }
 
-func GoogleConfig() oauth2.Config {
-	err := godotenv.Load("auth_server.env")
-	if err != nil {
-		log.Fatalf("Some error occured. Err: %s", err)
-	}
+// func GoogleConfig() oauth2.Config {
+// 	AppConfig.GoogleLoginConfig = oauth2.Config{
+// 		RedirectURL:  os.Getenv("GOOGLE_REDIRECT"),
+// 		ClientID:     os.Getenv("GOOGLE_CLIENT_ID"),
+// 		ClientSecret: os.Getenv("GOOGLE_CLIENT_SECRET"),
+// 		Scopes:       []string{"https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile"},
+// 		Endpoint:     google.Endpoint,
+// 	}
 
-	AppConfig.GoogleLoginConfig = oauth2.Config{
-		RedirectURL: os.Getenv("GOOGLE_REDIRECT"),
-		// RedirectURL:  "http://localhost:8080/google_callback",
-		ClientID:     os.Getenv("GOOGLE_CLIENT_ID"),
-		ClientSecret: os.Getenv("GOOGLE_CLIENT_SECRET"),
-		Scopes: []string{"https://www.googleapis.com/auth/userinfo.email",
-			"https://www.googleapis.com/auth/userinfo.profile"},
-		Endpoint: google.Endpoint,
-	}
+// 	return AppConfig.GoogleLoginConfig
+// }
 
-	return AppConfig.GoogleLoginConfig
-}
+// func githubConfig() oauth2.Config {
+// 	AppConfig.GithubLoginConfig = oauth2.Config{
+// 		RedirectURL:  os.Getenv("GITHUB_REDIRECT"),
+// 		ClientID:     os.Getenv("GITHUB_CLIENT_ID"),
+// 		ClientSecret: os.Getenv("GITHUB_CLIENT_SECRET"),
+// 		Scopes:       []string{"user:email"},
+// 		Endpoint:     google.Endpoint,
+// 	}
+
+// 	return AppConfig.GithubLoginConfig
+// }
