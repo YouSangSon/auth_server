@@ -2,7 +2,7 @@ package main
 
 import (
 	"auth_server/config"
-	"auth_server/controller"
+	"auth_server/controllers"
 
 	"github.com/gofiber/fiber"
 )
@@ -13,8 +13,12 @@ func main() {
 	config.GoogleConfig()
 
 	app.Get("/google_login", func(c *fiber.Ctx) {
-		controller.GoogleLogin(c)
+		controllers.GoogleLogin(c)
 	})
 
-	app.Listen(":8000")
+	app.Get("/google_callback", func(c *fiber.Ctx) {
+		controllers.GoogleCallback(c)
+	})
+
+	app.Listen(":8080")
 }
