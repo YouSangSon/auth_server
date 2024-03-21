@@ -19,3 +19,8 @@
 
 # Go workspace file
 go.work
+
+# etc
+auth_server.env
+.idea/
+.vscode/
