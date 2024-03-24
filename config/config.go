@@ -1,43 +1,48 @@
 package config
 
-// type Config struct {
-// 	GoogleLoginConfig oauth2.Config
-// 	NaverLoginConfig  oauth2.Config
-// 	KaKaoLoginConfig  oauth2.Config
-// 	GithubLoginConfig oauth2.Config
-// }
+import (
+	"os"
 
-// var AppConfig Config
+	"github.com/joho/godotenv"
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/google"
+)
 
-// func ConfigLoad() {
-// 	err := godotenv.Load("auth_server.env")
-// 	if err != nil {
-// 		log.Fatalf("Some error occurred. Err: %s", err)
-// 	}
+type Conf struct {
+	GoogleConf oauth2.Config
+	GithubConf oauth2.Config
+}
 
-// 	AppConfig.GoogleLoginConfig = GoogleConfig()
-// }
+var Configs Conf
 
-// func GoogleConfig() oauth2.Config {
-// 	AppConfig.GoogleLoginConfig = oauth2.Config{
-// 		RedirectURL:  os.Getenv("GOOGLE_REDIRECT"),
-// 		ClientID:     os.Getenv("GOOGLE_CLIENT_ID"),
-// 		ClientSecret: os.Getenv("GOOGLE_CLIENT_SECRET"),
-// 		Scopes:       []string{"https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile"},
-// 		Endpoint:     google.Endpoint,
-// 	}
+func LoadConfig() error {
+	err := godotenv.Load("auth_server.env")
+	if err != nil {
+		return err
+	}
 
-// 	return AppConfig.GoogleLoginConfig
-// }
+	Configs.GoogleConf = googleConfig()
+	Configs.GithubConf = githubConfig()
 
-// func githubConfig() oauth2.Config {
-// 	AppConfig.GithubLoginConfig = oauth2.Config{
-// 		RedirectURL:  os.Getenv("GITHUB_REDIRECT"),
-// 		ClientID:     os.Getenv("GITHUB_CLIENT_ID"),
-// 		ClientSecret: os.Getenv("GITHUB_CLIENT_SECRET"),
-// 		Scopes:       []string{"user:email"},
-// 		Endpoint:     google.Endpoint,
-// 	}
+	return nil
+}
 
-// 	return AppConfig.GithubLoginConfig
-// }
+func googleConfig() oauth2.Config {
+	return oauth2.Config{
+		RedirectURL:  os.Getenv("GOOGLE_REDIRECT"),
+		ClientID:     os.Getenv("GOOGLE_CLIENT_ID"),
+		ClientSecret: os.Getenv("GOOGLE_CLIENT_SECRET"),
+		Scopes:       []string{"https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile"},
+		Endpoint:     google.Endpoint,
+	}
+}
+
+func githubConfig() oauth2.Config {
+	return oauth2.Config{
+		RedirectURL:  os.Getenv("GITHUB_REDIRECT"),
+		ClientID:     os.Getenv("GITHUB_CLIENT_ID"),
+		ClientSecret: os.Getenv("GITHUB_CLIENT_SECRET"),
+		Scopes:       []string{"user:email"},
+		Endpoint:     google.Endpoint,
+	}
+}

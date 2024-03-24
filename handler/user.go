@@ -1,5 +1,11 @@
 package handler
 
+import "github.com/gofiber/fiber/v2"
+
+func UserHandler(web *fiber.App) {
+	user := web.Group("/user")
+}
+
 // func signUpHandler(c *fiber.Ctx) error {
 // 	user := User{}
 // 	err := c.BodyParser(&user)
