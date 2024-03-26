@@ -9,6 +9,8 @@ import (
 )
 
 type Conf struct {
+	Domain     string
+	ServerPort string
 	GoogleConf oauth2.Config
 	GithubConf oauth2.Config
 }
@@ -20,6 +22,9 @@ func LoadConfig() error {
 	if err != nil {
 		return err
 	}
+
+	Configs.Domain = os.Getenv("DOMAIN")
+	Configs.ServerPort = os.Getenv("SERVER_PORT")
 
 	Configs.GoogleConf = googleConfig()
 	Configs.GithubConf = githubConfig()

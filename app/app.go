@@ -1,41 +1,39 @@
 package app
 
 import (
+	"auth_server/app/handler"
 	"context"
+	"time"
 
 	"github.com/go-redis/redis"
 	"github.com/gofiber/fiber/v2"
-	"golang.org/x/oauth2"
+	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gofiber/fiber/v2/middleware/recover"
 	"gorm.io/gorm"
 )
 
-type App struct {
-	ctx               context.Context
-	postgresDB        *gorm.DB
-	redisDB           *redis.Client
-	googleLoginConfig oauth2.Config
-	githubLoginConfig oauth2.Config
-	Base              fiber.Router
-	Cache             fiber.Router
-	// NaverLoginConfig  oauth2.Config
-	// KaKaoLoginConfig  oauth2.Config
+func BaseServer(ctx context.Context, db *gorm.DB, rdb *redis.Client) *fiber.App {
+	web := fiber.New(fiber.Config{
+		AppName:       "Auth Server v1.0",
+		CaseSensitive: true,
+		ReadTimeout:   15 * time.Second,
+		WriteTimeout:  15 * time.Second,
+	})
 
-}
+	web.Use(logger.New())
+	web.Use(recover.New())
 
-// var App app
+	api := web.Group("/api")
+	v1 := api.Group("/v1")
 
-func NewApp(ctx context.Context, db *gorm.DB, rdb *redis.Client, google oauth2.Config, github oauth2.Config, v1, v2 fiber.Router) App {
-	return App{
-		ctx:               ctx,
-		postgresDB:        db,
-		redisDB:           rdb,
-		googleLoginConfig: google,
-		githubLoginConfig: github,
-		Base:              v1,
-		Cache:             v2,
+	handlerContext := &handler.HandlerContext{
+		Ctx:        ctx,
+		PostgresDB: db,
+		RedisDB:    rdb,
+		Router:     v1,
 	}
-}
 
-func (app *App) Start() {
+	handlerContext.UserHandler()
 
+	return web
 }

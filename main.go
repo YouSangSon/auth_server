@@ -5,18 +5,10 @@ import (
 	"auth_server/config"
 	"auth_server/pkg/db"
 	"auth_server/pkg/logger"
-	"auth_server/pkg/web"
 	"context"
 
-	"github.com/gofiber/fiber/v2"
+	"golang.org/x/sync/errgroup"
 )
-
-//type User struct {
-//	ID       int    `json:"id"`
-//	Username string `json:"username"`
-//	Password string `json:"password"`
-//	Email    string `json:"email"`
-//}
 
 func init() {
 	if err := config.LoadConfig(); err != nil {
@@ -31,6 +23,8 @@ func init() {
 func main() {
 	ctx := context.Background()
 
+	g, ctx := errgroup.WithContext(ctx)
+
 	logger.Logger.Info("Auth Server started...")
 
 	db, rdb, err := db.DBInit("postgres")
@@ -38,23 +32,13 @@ func main() {
 		panic(err)
 	}
 
-	web := web.WebInit()
-
-	api := web.Group("/api")
-
-	v1 := api.Group("/v1", func(c *fiber.Ctx) error {
-		c.Set("Version", "v1")
-		return c.Next()
+	g.Go(func() error {
+		return app.BaseServer(ctx, db, rdb).Listen(config.Configs.ServerPort)
 	})
 
-	v2 := api.Group("/v2", func(c *fiber.Ctx) error {
-		c.Set("Version", "v2")
-		return c.Next()
-	})
-
-	newApp := app.NewApp(ctx, db, rdb, config.Configs.GoogleConf, config.Configs.GithubConf, v1, v2)
-
-	newApp.Start()
+	if err := g.Wait(); err != nil {
+		logger.Logger.Fatal(err)
+	}
 }
 
 // func signUpHandler(c fiber.Ctx) error {
